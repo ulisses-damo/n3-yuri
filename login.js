@@ -1,7 +1,3 @@
-// ===================================
-// CONFIGURAÇÃO DO FIREBASE
-// ===================================
-// Importe as funções necessárias do Firebase SDK
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { 
     getAuth, 
@@ -20,7 +16,6 @@ import {
     getDoc 
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-// Configuração do Firebase - Substitua pelos seus dados
 const firebaseConfig = {
    apiKey: "AIzaSyDU7oOSmOrmjJezyfXcieVU-qWLGozurT0",
   authDomain: "n3-yuri-ulissesdamo-4d3ae.firebaseapp.com",
@@ -31,15 +26,11 @@ const firebaseConfig = {
   measurementId: "G-GSC4TK2NLQ"
 };
 
-// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
-// ===================================
-// ELEMENTOS DO DOM
-// ===================================
 const loginForm = document.getElementById('loginForm');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
@@ -48,9 +39,6 @@ const googleLoginBtn = document.getElementById('googleLoginBtn');
 const registerBtn = document.getElementById('registerBtn');
 const forgotPasswordLink = document.getElementById('forgotPassword');
 
-// ===================================
-// FUNÇÕES DE MENSAGEM
-// ===================================
 function showMessage(text, type) {
     messageDiv.textContent = text;
     messageDiv.className = `message ${type}`;
@@ -62,12 +50,9 @@ function hideMessage() {
     messageDiv.className = 'message';
 }
 
-// ===================================
-// SALVAR DADOS DO USUÁRIO NO FIRESTORE
-// ===================================
 async function saveUserData(user) {
     try {
-        const userRef = doc(db, 'users', user.uid);
+        const userRef = doc(db, 'usuarios', user.uid);
         const userSnap = await getDoc(userRef);
 
         if (!userSnap.exists()) {
@@ -76,12 +61,9 @@ async function saveUserData(user) {
                 email: user.email,
                 displayName: user.displayName || 'Usuário',
                 photoURL: user.photoURL || '',
-                createdAt: new Date().toISOString(),
-                lastLogin: new Date().toISOString()
             });
             console.log('Dados do usuário salvos no Firestore');
         } else {
-            // Atualizar último login
             await setDoc(userRef, {
                 lastLogin: new Date().toISOString()
             }, { merge: true });
@@ -91,9 +73,6 @@ async function saveUserData(user) {
     }
 }
 
-// ===================================
-// LOGIN COM EMAIL E SENHA
-// ===================================
 async function loginWithEmail(email, password) {
     try {
         showMessage('Autenticando...', 'loading');
@@ -102,14 +81,11 @@ async function loginWithEmail(email, password) {
 
         console.log('Login bem-sucedido:', user);
         
-        // Salvar/atualizar dados do usuário
         await saveUserData(user);
 
         showMessage('Login realizado com sucesso! Redirecionando...', 'success');
 
-        // Redirecionar após 2 segundos
         setTimeout(() => {
-            // window.location.href = 'dashboard.html';
             alert(`Bem-vindo, ${user.email}!`);
         }, 2000);
 
@@ -119,9 +95,6 @@ async function loginWithEmail(email, password) {
     }
 }
 
-// ===================================
-// LOGIN COM GOOGLE
-// ===================================
 async function loginWithGoogle() {
     try {
         showMessage('Abrindo login do Google...', 'loading');
@@ -130,13 +103,11 @@ async function loginWithGoogle() {
 
         console.log('Login com Google bem-sucedido:', user);
         
-        // Salvar dados do usuário no Firestore
         await saveUserData(user);
 
         showMessage('Login realizado com sucesso!', 'success');
 
         setTimeout(() => {
-            // window.location.href = 'dashboard.html';
             alert(`Bem-vindo, ${user.displayName}!`);
         }, 2000);
 
@@ -146,9 +117,6 @@ async function loginWithGoogle() {
     }
 }
 
-// ===================================
-// REGISTRO DE NOVO USUÁRIO
-// ===================================
 async function registerUser(email, password) {
     try {
         showMessage('Criando conta...', 'loading');
@@ -157,13 +125,11 @@ async function registerUser(email, password) {
 
         console.log('Conta criada com sucesso:', user);
         
-        // Salvar dados do usuário
         await saveUserData(user);
 
         showMessage('Conta criada com sucesso!', 'success');
 
         setTimeout(() => {
-            // window.location.href = 'dashboard.html';
             alert(`Conta criada! Bem-vindo, ${user.email}!`);
         }, 2000);
 
@@ -173,9 +139,6 @@ async function registerUser(email, password) {
     }
 }
 
-// ===================================
-// RECUPERAR SENHA
-// ===================================
 async function resetPassword(email) {
     try {
         await sendPasswordResetEmail(auth, email);
@@ -186,9 +149,6 @@ async function resetPassword(email) {
     }
 }
 
-// ===================================
-// TRATAMENTO DE ERROS
-// ===================================
 function handleAuthError(error) {
     let errorMessage = 'Erro ao processar sua solicitação.';
 
@@ -221,11 +181,6 @@ function handleAuthError(error) {
     showMessage(errorMessage, 'error');
 }
 
-// ===================================
-// EVENTOS
-// ===================================
-
-// Login com formulário
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideMessage();
@@ -241,13 +196,11 @@ loginForm.addEventListener('submit', async (e) => {
     await loginWithEmail(email, password);
 });
 
-// Login com Google
 googleLoginBtn.addEventListener('click', async () => {
     hideMessage();
     await loginWithGoogle();
 });
 
-// Botão de registro
 registerBtn.addEventListener('click', async () => {
     hideMessage();
     
@@ -267,7 +220,6 @@ registerBtn.addEventListener('click', async () => {
     await registerUser(email, password);
 });
 
-// Esqueceu a senha
 forgotPasswordLink.addEventListener('click', async (e) => {
     e.preventDefault();
     hideMessage();
@@ -282,24 +234,15 @@ forgotPasswordLink.addEventListener('click', async (e) => {
     await resetPassword(email);
 });
 
-// ===================================
-// VERIFICAR ESTADO DE AUTENTICAÇÃO
-// ===================================
 onAuthStateChanged(auth, (user) => {
     if (user) {
         console.log('Usuário já está logado:', user);
         showMessage(`Olá, ${user.displayName || user.email}!`, 'success');
-        
-        // Opcional: redirecionar automaticamente
-        // window.location.href = 'dashboard.html';
     } else {
         console.log('Usuário não está logado');
     }
 });
 
-// ===================================
-// FUNÇÃO DE LOGOUT
-// ===================================
 async function logout() {
     try {
         await signOut(auth);
@@ -312,5 +255,4 @@ async function logout() {
     }
 }
 
-// Expor função de logout globalmente
 window.logoutUser = logout;
