@@ -7,16 +7,13 @@ const userPhoto = document.getElementById('userPhoto');
 const welcomeMessage = document.getElementById('welcomeMessage');
 const logoutBtn = document.getElementById('logoutBtn');
 
-let checkingAuth = true;
-let authCheckComplete = false;
+let authResolved = false;
 
 onAuthStateChanged(auth, (user) => {
-    checkingAuth = false;
-    
-    if (authCheckComplete) return;
-    authCheckComplete = true;
+    authResolved = true;
     
     if (user) {
+        console.log('Usuário autenticado:', user);
         userName.textContent = user.displayName || 'Usuário';
         
         if (user.photoURL) {
@@ -30,17 +27,17 @@ onAuthStateChanged(auth, (user) => {
         
         document.body.style.visibility = 'visible';
     } else {
-        if (window.location.pathname.includes('dashboard.html')) {
-            window.location.href = 'index.html';
-        }
+        console.log('Usuário não autenticado, redirecionando...');
+        window.location.href = 'index.html';
     }
 });
 
 setTimeout(() => {
-    if (checkingAuth) {
+    if (!authResolved) {
+        console.log('Timeout: autenticação não resolvida');
         window.location.href = 'index.html';
     }
-}, 3000);
+}, 5000);
 
 logoutBtn.addEventListener('click', async () => {
     try {
