@@ -1,9 +1,7 @@
-import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { getFirestore, collection, addDoc, query, where, orderBy, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { auth, db } from './firebase-config.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { collection, addDoc, query, where, orderBy, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 import { GEMINI_API_KEY, GEMINI_CONFIG } from './config.js';
-
-const auth = getAuth();
-const db = getFirestore();
 
 const chatToggle = document.getElementById('chatToggle');
 const chatWindow = document.getElementById('chatWindow');

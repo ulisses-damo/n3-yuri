@@ -1,6 +1,5 @@
-import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-
-const auth = getAuth();
+import { auth } from './firebase-config.js';
+import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 const userName = document.getElementById('userName');
 const userPhoto = document.getElementById('userPhoto');
@@ -10,13 +9,19 @@ const logoutBtn = document.getElementById('logoutBtn');
 let authResolved = false;
 const AUTH_TIMEOUT = 5000;
 
+document.body.style.visibility = 'hidden';
+
 onAuthStateChanged(auth, (user) => {
     authResolved = true;
     
-    if (user) {
-        console.log('Usuário autenticado na dashboard:', user);
+    const currentPage = window.location.pathname;
+    const isOnDashboard = currentPage.includes('dashboard.html');
+    
+    if (user && isOnDashboard) {
+        console.log('Usuário autenticado na dashboard:', user.email);
         
-        userName.textContent = user.displayName || user.email.split('@')[0] || 'Usuário';
+        const displayName = user.displayName || user.email.split('@')[0];
+        userName.textContent = displayName;
         
         if (user.photoURL) {
             userPhoto.src = user.photoURL;
@@ -25,11 +30,10 @@ onAuthStateChanged(auth, (user) => {
             userPhoto.style.display = 'none';
         }
 
-        const displayName = user.displayName || user.email.split('@')[0];
         welcomeMessage.textContent = `Olá ${displayName}! Você está autenticado com sucesso.`;
         
         document.body.style.visibility = 'visible';
-    } else {
+    } else if (!user) {
         console.log('Nenhum usuário autenticado, redirecionando para login...');
         window.location.replace('index.html');
     }

@@ -1,6 +1,5 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { auth, db } from './firebase-config.js';
 import { 
-    getAuth, 
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signInWithPopup,
@@ -10,25 +9,11 @@ import {
     signOut 
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { 
-    getFirestore, 
     doc, 
     setDoc, 
     getDoc 
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-const firebaseConfig = {
-   apiKey: "AIzaSyDU7oOSmOrmjJezyfXcieVU-qWLGozurT0",
-  authDomain: "n3-yuri-ulissesdamo-4d3ae.firebaseapp.com",
-  projectId: "n3-yuri-ulissesdamo-4d3ae",
-  storageBucket: "n3-yuri-ulissesdamo-4d3ae.firebasestorage.app",
-  messagingSenderId: "442899283360",
-  appId: "1:442899283360:web:01a284f1c18e1b9a68b8c5",
-  measurementId: "G-GSC4TK2NLQ"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
 
 const loginForm = document.getElementById('loginForm');
@@ -242,11 +227,14 @@ onAuthStateChanged(auth, (user) => {
         return;
     }
     
-    if (user && window.location.pathname.endsWith('index.html')) {
+    const currentPage = window.location.pathname;
+    const isOnLoginPage = currentPage.endsWith('index.html') || currentPage === '/' || currentPage.endsWith('/');
+    
+    if (user && isOnLoginPage) {
         console.log('Usuário já está logado, redirecionando para dashboard');
         window.location.replace('dashboard.html');
     } else if (user) {
-        console.log('Usuário logado:', user);
+        console.log('Usuário logado:', user.email);
     } else {
         console.log('Usuário não está logado');
     }
