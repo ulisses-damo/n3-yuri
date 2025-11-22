@@ -86,8 +86,8 @@ async function loginWithEmail(email, password) {
         showMessage('Login realizado com sucesso! Redirecionando...', 'success');
 
         setTimeout(() => {
-            alert(`Bem-vindo, ${user.email}!`);
-        }, 2000);
+            window.location.href = 'dashboard.html';
+        }, 1500);
 
     } catch (error) {
         console.error('Erro no login:', error);
@@ -108,8 +108,8 @@ async function loginWithGoogle() {
         showMessage('Login realizado com sucesso!', 'success');
 
         setTimeout(() => {
-            alert(`Bem-vindo, ${user.displayName}!`);
-        }, 2000);
+            window.location.href = 'dashboard.html';
+        }, 1500);
 
     } catch (error) {
         console.error('Erro no login com Google:', error);
@@ -130,8 +130,8 @@ async function registerUser(email, password) {
         showMessage('Conta criada com sucesso!', 'success');
 
         setTimeout(() => {
-            alert(`Conta criada! Bem-vindo, ${user.email}!`);
-        }, 2000);
+            window.location.href = 'dashboard.html';
+        }, 1500);
 
     } catch (error) {
         console.error('Erro ao criar conta:', error);
@@ -237,7 +237,7 @@ forgotPasswordLink.addEventListener('click', async (e) => {
 onAuthStateChanged(auth, (user) => {
     if (user) {
         console.log('Usuário já está logado:', user);
-        showMessage(`Olá, ${user.displayName || user.email}!`, 'success');
+        window.location.href = 'dashboard.html';
     } else {
         console.log('Usuário não está logado');
     }

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Bem-vindo</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-brand">
+                <h2>🚀 Dashboard</h2>
+            </div>
+            <div class="nav-user">
+                <img id="userPhoto" src="" alt="User" class="user-avatar">
+                <span id="userName">Usuário</span>
+                <button id="logoutBtn" class="btn-logout">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        <div class="welcome-section">
+            <div class="welcome-card">
+                <h1>Bem-vindo de volta! 👋</h1>
+                <p id="welcomeMessage">Você está autenticado com sucesso.</p>
+                <div class="user-info">
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span id="userEmail" class="info-value">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">UID:</span>
+                        <span id="userId" class="info-value">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Último login:</span>
+                        <span id="lastLogin" class="info-value">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Assistente IA</h3>
+                    <p>Converse com nosso chatbot inteligente para obter ajuda instantânea</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Segurança</h3>
+                    <p>Seus dados estão protegidos com Firebase Authentication</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💾</div>
+                    <h3>Armazenamento</h3>
+                    <p>Histórico de conversas salvo no Firestore</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Tempo Real</h3>
+                    <p>Respostas instantâneas powered by Gemini AI</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-prompt">
+            <h3>💬 Precisa de ajuda?</h3>
+            <p>Clique no botão flutuante no canto inferior direito para conversar com nosso assistente virtual!</p>
+        </div>
+    </main>
+
+    <button id="chatToggle" class="chat-toggle" title="Chat com IA">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+    </button>
+
+    <div id="chatWindow" class="chat-window">
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="ai-avatar">🤖</div>
+                <div>
+                    <h3>Assistente IA</h3>
+                    <span class="status">Online</span>
+                </div>
+            </div>
+            <button id="chatClose" class="chat-close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div id="chatMessages" class="chat-messages">
+            <div class="message bot-message">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <p>Olá! Sou seu assistente virtual. Como posso ajudá-lo hoje?</p>
+                    <span class="message-time">Agora</span>
+                </div>
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" id="chatInput" placeholder="Digite sua mensagem..." autocomplete="off">
+            <button id="chatSend" class="chat-send-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script type="module" src="config.js"></script>
+    <script type="module" src="dashboard.js"></script>
+    <script type="module" src="chatbot.js"></script>
+</body>
+</html>
