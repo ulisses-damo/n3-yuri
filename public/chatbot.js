@@ -116,18 +116,12 @@ async function sendMessage() {
 
 async function callGeminiAPI(userMessage) {
     const systemPrompt = `Você é um assistente virtual prestativo de um sistema de login e autenticação. 
-    Ajude os usuários com problemas de login, recuperação de senha, criação de conta e outras questões relacionadas.
-    Seja educado, claro e objetivo nas respostas. Responda em português do Brasil.`;
+Ajude os usuários com problemas de login, recuperação de senha, criação de conta e outras questões relacionadas.
+Seja educado, claro e objetivo nas respostas. Responda em português do Brasil.`;
 
     const contents = [
         {
-            role: 'user',
-            parts: [{ text: systemPrompt }]
-        },
-        ...conversationHistory.slice(-10),
-        {
-            role: 'user',
-            parts: [{ text: userMessage }]
+            parts: [{ text: systemPrompt + "\n\n" + userMessage }]
         }
     ];
 
@@ -148,10 +142,17 @@ async function callGeminiAPI(userMessage) {
     });
 
     if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Erro da API:', errorText);
         throw new Error(`API Error: ${response.status}`);
     }
 
     const data = await response.json();
+    
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+        throw new Error('Resposta inválida da API');
+    }
+    
     return data.candidates[0].content.parts[0].text;
 }
 
@@ -174,22 +175,32 @@ async function loadChatHistory() {
     try {
         const q = query(
             collection(db, 'chat_history'),
-            where('userId', '==', currentUser.uid),
-            orderBy('timestamp', 'asc')
+            where('userId', '==', currentUser.uid)
         );
 
         const querySnapshot = await getDocs(q);
         const messages = chatMessages.querySelectorAll('.message:not(:first-child)');
         messages.forEach(msg => msg.remove());
 
+        const chatHistory = [];
         querySnapshot.forEach((doc) => {
             const data = doc.data();
-            addMessage(data.userMessage, true);
-            addMessage(data.botResponse, false);
+            chatHistory.push({
+                timestamp: data.timestamp,
+                userMessage: data.userMessage,
+                botResponse: data.botResponse
+            });
+        });
+
+        chatHistory.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+        chatHistory.forEach((chat) => {
+            addMessage(chat.userMessage, true);
+            addMessage(chat.botResponse, false);
             
             conversationHistory.push(
-                { role: 'user', parts: [{ text: data.userMessage }] },
-                { role: 'model', parts: [{ text: data.botResponse }] }
+                { role: 'user', parts: [{ text: chat.userMessage }] },
+                { role: 'model', parts: [{ text: chat.botResponse }] }
             );
         });
     } catch (error) {
