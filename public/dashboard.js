@@ -8,9 +8,14 @@ const welcomeMessage = document.getElementById('welcomeMessage');
 const logoutBtn = document.getElementById('logoutBtn');
 
 let checkingAuth = true;
+let authCheckComplete = false;
 
 onAuthStateChanged(auth, (user) => {
     checkingAuth = false;
+    
+    if (authCheckComplete) return;
+    authCheckComplete = true;
+    
     if (user) {
         userName.textContent = user.displayName || 'Usuário';
         
@@ -22,8 +27,12 @@ onAuthStateChanged(auth, (user) => {
         }
 
         welcomeMessage.textContent = `Olá ${user.displayName || user.email}! Você está autenticado com sucesso.`;
+        
+        document.body.style.visibility = 'visible';
     } else {
-        window.location.href = 'index.html';
+        if (window.location.pathname.includes('dashboard.html')) {
+            window.location.href = 'index.html';
+        }
     }
 });
 

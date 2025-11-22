@@ -234,10 +234,17 @@ forgotPasswordLink.addEventListener('click', async (e) => {
     await resetPassword(email);
 });
 
+let authCheckComplete = false;
+
 onAuthStateChanged(auth, (user) => {
+    if (authCheckComplete) return;
+    authCheckComplete = true;
+    
     if (user) {
         console.log('Usuário já está logado:', user);
-        window.location.href = 'dashboard.html';
+        if (!window.location.pathname.includes('dashboard.html')) {
+            window.location.href = 'dashboard.html';
+        }
     } else {
         console.log('Usuário não está logado');
     }
