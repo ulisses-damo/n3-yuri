@@ -75,6 +75,7 @@ async function saveUserData(user) {
 
 async function loginWithEmail(email, password) {
     try {
+        isLoggingIn = true;
         showMessage('Autenticando...', 'loading');
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
@@ -84,12 +85,11 @@ async function loginWithEmail(email, password) {
         await saveUserData(user);
 
         showMessage('Login realizado com sucesso! Redirecionando...', 'success');
-
-        setTimeout(() => {
-            window.location.href = 'dashboard.html';
-        }, 1500);
+        
+        window.location.replace('dashboard.html');
 
     } catch (error) {
+        isLoggingIn = false;
         console.error('Erro no login:', error);
         handleAuthError(error);
     }
@@ -97,6 +97,7 @@ async function loginWithEmail(email, password) {
 
 async function loginWithGoogle() {
     try {
+        isLoggingIn = true;
         showMessage('Abrindo login do Google...', 'loading');
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
@@ -106,12 +107,11 @@ async function loginWithGoogle() {
         await saveUserData(user);
 
         showMessage('Login realizado com sucesso!', 'success');
-
-        setTimeout(() => {
-            window.location.href = 'dashboard.html';
-        }, 1500);
+        
+        window.location.replace('dashboard.html');
 
     } catch (error) {
+        isLoggingIn = false;
         console.error('Erro no login com Google:', error);
         handleAuthError(error);
     }
@@ -119,6 +119,7 @@ async function loginWithGoogle() {
 
 async function registerUser(email, password) {
     try {
+        isLoggingIn = true;
         showMessage('Criando conta...', 'loading');
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
@@ -128,12 +129,11 @@ async function registerUser(email, password) {
         await saveUserData(user);
 
         showMessage('Conta criada com sucesso!', 'success');
-
-        setTimeout(() => {
-            window.location.href = 'dashboard.html';
-        }, 1500);
+        
+        window.location.replace('dashboard.html');
 
     } catch (error) {
+        isLoggingIn = false;
         console.error('Erro ao criar conta:', error);
         handleAuthError(error);
     }
@@ -234,17 +234,19 @@ forgotPasswordLink.addEventListener('click', async (e) => {
     await resetPassword(email);
 });
 
-let authCheckComplete = false;
+let isLoggingIn = false;
 
 onAuthStateChanged(auth, (user) => {
-    if (authCheckComplete) return;
-    authCheckComplete = true;
+    if (isLoggingIn) {
+        console.log('Processo de login ativo, aguardando conclusão');
+        return;
+    }
     
-    if (user) {
-        console.log('Usuário já está logado:', user);
-        if (!window.location.pathname.includes('dashboard.html')) {
-            window.location.href = 'dashboard.html';
-        }
+    if (user && window.location.pathname.endsWith('index.html')) {
+        console.log('Usuário já está logado, redirecionando para dashboard');
+        window.location.replace('dashboard.html');
+    } else if (user) {
+        console.log('Usuário logado:', user);
     } else {
         console.log('Usuário não está logado');
     }
